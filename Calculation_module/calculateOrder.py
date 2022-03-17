@@ -1,12 +1,11 @@
 import copy
 
-from matplotlib.pyplot import flag
 from Calculation_module.initModel import *
 from Calculation_module.baseCalculate import *
 from Constant.constant import *
+
 sec_Max = 1e6
 
-ansList = []
 
 
 class record:
@@ -57,6 +56,9 @@ class ansRecord:
 
 class dfs_Search:
     def __init__(self, Data: initData) -> None:
+        self.orignData=Data
+
+        # dfs
         clientNum, resoNum = Data.clientNum, Data.resoNum
         timeTableList = [
             [-1000 for j in range(resoNum)]for i in range(clientNum)]
@@ -64,6 +66,15 @@ class dfs_Search:
         self.anslist = []
         self.clientPartSum = listGetSum(Data.boolNeed, clientNum, resoNum)
         self.calculate_dfs(1, 0, record(),  timeTableList, Data)
+        
+        #sort
+        self.sort_anslist()
+
+    def retMinTimeAns(self)->ansRecord:
+        return self.anslist[0]
+
+    def sort_anslist(self):
+        self.anslist.sort(key=lambda ans:ans.endTime)
 
     def PrintDfsResult(self):
         for i, x in enumerate(self.anslist):
