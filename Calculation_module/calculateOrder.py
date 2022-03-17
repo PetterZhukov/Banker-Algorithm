@@ -33,7 +33,7 @@ class record:
         return tuple(zip(self.clientList, self.beginTimeList))
         # 假如超过26  -------------------------------------------
         # return zip(self.clientList, self.beginTimeList)
-    
+
     def transClassToString(self):
         return tuple(zip(map(lambda x: numToAlp_dict[x], self.clientList), map(lambda x: f"{x:>2}", self.beginTimeList)))
 
@@ -63,14 +63,13 @@ class dfs_Search:
 
         self.anslist = []
         self.clientPartSum = listGetSum(Data.boolNeed, clientNum, resoNum)
-        self.calculate_dfs(1,0, record(), [[False for j in range(resoNum)]for i in range(
-            clientNum)], timeTableList, Data)
+        self.calculate_dfs(1, 0, record(),  timeTableList, Data)
 
     def PrintDfsResult(self):
         for i, x in enumerate(self.anslist):
             print(f'{i+1:>3}  {x.transClassToString()}')
 
-    def calculate_dfs(self, sec: int,releasedResoNum,recordList: record, usedList, timeTableList, Data: initData):
+    def calculate_dfs(self, sec: int, releasedResoNum, recordList: record, timeTableList, Data: initData):
         '''
         sec:当前是第几秒,
         recordList:记录顺序,[(开始时间,序号)]
@@ -86,13 +85,14 @@ class dfs_Search:
         # 更新Data，有可以释放的资源就释放掉
         for i in range(clientNum):
             for j in range(resoNum):
-                if not usedList[i][j] and timeTableList[i][j] > 0 and sec >= timeTableList[i][j]:
+                if timeTableList[i][j] > 0 and sec >= timeTableList[i][j]:
                     # 释放
                     Data.haveResoList[j] += (Data.allocatedList[i]
                                              [j]+Data.NeedList[i][j])
-                    # update usedList
-                    usedList[i][j] = True
-                    releasedResoNum+=1
+                    # update timeTableList
+                    timeTableList[i][j] = -1000
+                    # update releasedResoNum
+                    releasedResoNum += 1
 
         if releasedResoNum == self.clientPartSum:
             # 全部释放
@@ -115,7 +115,7 @@ class dfs_Search:
                                        for j in range(resoNum)] for k in range(clientNum)]
                 haveReleaseClient = True
                 self.calculate_dfs(
-                    sec+1,releasedResoNum,recordList.retAppendElementSelf(i, sec), copy.deepcopy(usedList), temp_timeTableList, temp_Data)
+                    sec+1, releasedResoNum, recordList.retAppendElementSelf(i, sec),  temp_timeTableList, temp_Data)
         if not haveReleaseClient:
-            self.calculate_dfs(sec+1,releasedResoNum, recordList, usedList,
+            self.calculate_dfs(sec+1, releasedResoNum, recordList,
                                timeTableList, Data)
