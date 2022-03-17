@@ -64,9 +64,10 @@ class testData:
 
 
 class initData:
-    def __init__(self, clientNum=retClientNum(), resoNum=retResourceNum()) -> None:
-        self.clientNum = clientNum
-        self.resoNum = resoNum
+    def __init__(self, clientNum=None, resoNum=None) -> None:
+        
+        self.clientNum = clientNum if clientNum!=None else retClientNum()
+        self.resoNum = resoNum if resoNum!=None else retResourceNum()
 
         self.boolNeed = self.retBoolNeed()
         '[i][j] i客户的j资源 是否需要'
@@ -79,6 +80,12 @@ class initData:
         self.NeedList = self.getNeedList()
         '[i][j] i客户的j资源还需资源'
 
+    def returnClientNum(self):
+        return self.clientNum
+
+    def returnResoNum(self):
+        return self.resoNum
+        
     def retHaveResources(self):
         'ret 一个资源矩阵 第j列表示第j个资源的数量  当前主机拥有的资源数量'
         return [retHaveResourceSize() for j in range(self.resoNum)]

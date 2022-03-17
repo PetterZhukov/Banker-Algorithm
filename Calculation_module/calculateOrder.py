@@ -70,6 +70,9 @@ class dfs_Search:
         #sort
         self.sort_anslist()
 
+    def retAnsList(self):
+        return self.anslist
+
     def retMinTimeAns(self)->ansRecord:
         return self.anslist[0]
 
