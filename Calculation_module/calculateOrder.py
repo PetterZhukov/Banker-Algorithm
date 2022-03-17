@@ -63,14 +63,14 @@ class dfs_Search:
 
         self.anslist = []
         self.clientPartSum = listGetSum(Data.boolNeed, clientNum, resoNum)
-        self.calculate_dfs(1, record(), [[False for j in range(resoNum)]for i in range(
+        self.calculate_dfs(1,0, record(), [[False for j in range(resoNum)]for i in range(
             clientNum)], timeTableList, Data)
 
     def PrintDfsResult(self):
         for i, x in enumerate(self.anslist):
             print(f'{i+1:>3}  {x.transClassToString()}')
 
-    def calculate_dfs(self, sec: int, recordList: record, usedList, timeTableList, Data: initData):
+    def calculate_dfs(self, sec: int,releasedResoNum,recordList: record, usedList, timeTableList, Data: initData):
         '''
         sec:当前是第几秒,
         recordList:记录顺序,[(开始时间,序号)]
@@ -92,8 +92,9 @@ class dfs_Search:
                                              [j]+Data.NeedList[i][j])
                     # update usedList
                     usedList[i][j] = True
+                    releasedResoNum+=1
 
-        if listGetSum(usedList, clientNum, resoNum) == self.clientPartSum:
+        if releasedResoNum == self.clientPartSum:
             # 全部释放
             self.anslist.append(ansRecord(recordList, sec))
             return
@@ -114,7 +115,7 @@ class dfs_Search:
                                        for j in range(resoNum)] for k in range(clientNum)]
                 haveReleaseClient = True
                 self.calculate_dfs(
-                    sec+1, recordList.retAppendElementSelf(i, sec), copy.deepcopy(usedList), temp_timeTableList, temp_Data)
+                    sec+1,releasedResoNum,recordList.retAppendElementSelf(i, sec), copy.deepcopy(usedList), temp_timeTableList, temp_Data)
         if not haveReleaseClient:
-            self.calculate_dfs(sec+1, recordList, usedList,
+            self.calculate_dfs(sec+1,releasedResoNum, recordList, usedList,
                                timeTableList, Data)
