@@ -7,6 +7,7 @@ import tkinter.messagebox
 from Calculation_module.initModel import initData
 from Calculation_module.calculateOrder import dfs_Search
 from FileIO.fileIO import detectDuplicateName_ansjson, findNoDuplicateName, pushAnslist_ToFile
+from UI.view_ResoDetail import ResoDetail
 
 
 class OriginFrame(Frame):
@@ -96,18 +97,19 @@ class OriginFrame(Frame):
         self.Data = initData()
         self.clientNumVar.set(self.Data.returnClientNum())
         self.resoNumVar.set(self.Data.returnResoNum())
-
+        self.haveInit=True
         tkinter.messagebox.showinfo('提示', '初始化完成')
 
     def showInitDetails(self):
         # 判断是否初始化
         if self.checkInit():
-            pass
+            ResoDetail(self.Data).showPage()
 
     def calculateAns(self):
         # 判断是否初始化
         if self.checkInit():
             self.ansClass = dfs_Search(self.Data)
+            self.haveCalculate=True
             tkinter.messagebox.showinfo('提示', '计算完成')
 
     def showAnsDetails(self):

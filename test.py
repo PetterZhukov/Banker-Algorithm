@@ -31,3 +31,7 @@ if True:
     MainPage(root)
     root.mainloop()
 
+'测试资源显示'
+if False:
+    ResoDetail(initData()).showPage()
+
