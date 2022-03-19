@@ -112,7 +112,7 @@ class OriginFrame(Frame):
             self.haveCalculate=True
             tkinter.messagebox.showinfo('提示', '计算完成')
 
-    def showAnsDetails(self):
+    def showAnsList(self):
         'show details of anslist'
         pass
 

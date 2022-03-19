@@ -7,7 +7,6 @@ from Constant.constant import *
 sec_Max = 1e6
 
 
-
 class record:
     '记录 当前那些客户开始释放以及释放的时间'
 
@@ -16,6 +15,8 @@ class record:
         '开始释放的客户名list'
         self.beginTimeList = []
         '记录开始时间'
+    def retClientList(self):
+        return self.clientList
 
     def retAppendElementSelf(self, clientName, beginTime):
         'ret 一个添加记录的self'
@@ -46,6 +47,12 @@ class ansRecord:
         self.endTime = endTime
         '结束时间'
 
+    def retFinalRecord(self):
+        return self.finalRecord
+
+    def retEndTime(self):
+        return self.endTime
+
     def transClassToTuple(self):
         return (self.finalRecord.transClassToTuple(), self.endTime)
 
@@ -56,28 +63,33 @@ class ansRecord:
 
 class dfs_Search:
     def __init__(self, Data: initData) -> None:
-        self.orignData=Data
+        # 初始Data
+        self.orignData = Data
 
         # dfs
-        clientNum, resoNum = Data.clientNum, Data.resoNum
+        self.clientNum, self.resoNum = Data.clientNum, Data.resoNum
         timeTableList = [
-            [-1000 for j in range(resoNum)]for i in range(clientNum)]
+            [-1000 for j in range(self.resoNum)]for i in range(self.clientNum)]
 
         self.anslist = []
-        self.clientPartSum = listGetSum(Data.boolNeed, clientNum, resoNum)
+        self.clientPartSum = listGetSum(
+            Data.boolNeed, self.clientNum, self.resoNum)
         self.calculate_dfs(1, 0, record(),  timeTableList, Data)
-        
-        #sort
+
+        # sort
         self.sort_anslist()
+
+    def retAnsNum(self):
+        return len(self.anslist)
 
     def retAnsList(self):
         return self.anslist
 
-    def retMinTimeAns(self)->ansRecord:
+    def retMinTimeAns(self) -> ansRecord:
         return self.anslist[0]
 
     def sort_anslist(self):
-        self.anslist.sort(key=lambda ans:ans.endTime)
+        self.anslist.sort(key=lambda ans: ans.endTime)
 
     def PrintDfsResult(self):
         for i, x in enumerate(self.anslist):

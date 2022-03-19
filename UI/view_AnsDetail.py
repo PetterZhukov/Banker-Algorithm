@@ -5,7 +5,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Combobox
 
-from Calculation_module.calculateOrder import dfs_Search
+from Calculation_module.calculateOrder import ansRecord, dfs_Search
 from Calculation_module.initModel import initData
 from Constant.constant import numToAlp_dict
 
@@ -60,12 +60,12 @@ class TableFrame2(Frame):
                     self, f'{self.tableList[i][j] if self.tableList[i][j]>0 else "x" :>{textlen}}', i+1, j+1)
 
 
-class ResoDetail():
-    def __init__(self, Data: initData):
+class AnsDetail():
+    def __init__(self, ansRecord:ansRecord):
         self.root = Tk()
-        self.root.geometry(f"{int((Data.resoNum+1)*(textlen*7.8)+20)}x800")
-        self.root.title("使用细节")
-        self.Data = Data
+
+        self.root.title("安全路径详情")
+
         # set the size
 
         self.creatScroAndTable()
