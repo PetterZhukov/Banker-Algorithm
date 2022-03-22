@@ -18,7 +18,7 @@ time_min = 2
 AllocatedResources_max = 70
 AllocatedResources_min = 30
 # 还需求的资源的初始值
-NeedResources_max = 100
+NeedResources_max = 120
 NeedResources_min = 80
 
 
@@ -63,11 +63,50 @@ class testData:
         '[i][j] i客户的j资源还需资源'
 
 
-class initData:
+class baseData:
+    def __init__(self, clientNum, resoNum, boolNeed, haveResoList, allocatedList, TimeList, NeedList) -> None:
+        self.ClassName='Data'
+        self.clientNum = clientNum
+        self.resoNum = resoNum
+
+        self.boolNeed = boolNeed
+        '[i][j] i客户的j资源 是否需要'
+        self.haveResoList = haveResoList
+        '[j] 主机拥有的第j个资源'
+        self.allocatedList = allocatedList
+        '[i][j] i客户的j资源已分配数量'
+        self.TimeList = TimeList
+        '[i][j] i客户的j资源释放需要时间'
+        self.NeedList = NeedList
+        '[i][j] i客户的j资源还需资源'
+
+    def returnClientNum(self):
+        return self.clientNum
+
+    def returnResoNum(self):
+        return self.resoNum
+
+    def retHaveResources(self):
+        'ret 一个资源矩阵 第j列表示第j个资源的数量  当前主机拥有的资源数量'
+        return [retHaveResourceSize() for j in range(self.resoNum)]
+
+    def retBoolNeed(self):
+        'ret 一个bool矩阵,第i行第j列表示第i个客户是否需要第j类资源'
+        return [[random.randint(0, 1) for j in range(self.resoNum)] for i in range(self.clientNum)]
+
+    def changeHaveResources(self, haveResoList):
+        '将拥有资源矩阵修改并返回self'
+        ret = copy.deepcopy(self)
+        ret.haveResoList = haveResoList
+        return ret
+
+
+class initData(baseData):
+    
     def __init__(self, clientNum=None, resoNum=None) -> None:
-        
-        self.clientNum = clientNum if clientNum!=None else retClientNum()
-        self.resoNum = resoNum if resoNum!=None else retResourceNum()
+        self.ClassName='Data'
+        self.clientNum = clientNum if clientNum != None else retClientNum()
+        self.resoNum = resoNum if resoNum != None else retResourceNum()
 
         self.boolNeed = self.retBoolNeed()
         '[i][j] i客户的j资源 是否需要'
@@ -79,20 +118,6 @@ class initData:
         '[i][j] i客户的j资源释放需要时间'
         self.NeedList = self.getNeedList()
         '[i][j] i客户的j资源还需资源'
-
-    def returnClientNum(self):
-        return self.clientNum
-
-    def returnResoNum(self):
-        return self.resoNum
-        
-    def retHaveResources(self):
-        'ret 一个资源矩阵 第j列表示第j个资源的数量  当前主机拥有的资源数量'
-        return [retHaveResourceSize() for j in range(self.resoNum)]
-
-    def retBoolNeed(self):
-        'ret 一个bool矩阵,第i行第j列表示第i个客户是否需要第j类资源'
-        return [[random.randint(0, 1) for j in range(self.resoNum)] for i in range(self.clientNum)]
 
     def getAllocatedList(self):
         "已分配矩阵"
@@ -106,8 +131,3 @@ class initData:
         "仍然需求资源矩阵"
         return [[retStillNeedResources()if self.boolNeed[i][j] else 0 for j in range(self.resoNum)] for i in range(self.clientNum)]
 
-    def changeHaveResources(self, haveResoList):
-        '将拥有资源矩阵修改并返回self'
-        ret = copy.deepcopy(self)
-        ret.haveResoList = haveResoList
-        return ret

@@ -62,7 +62,7 @@ class TableFrame2(Frame):
 
 class ResoDetail():
     def __init__(self, Data: initData):
-        self.root = Tk()
+        self.root = Toplevel()
         self.root.geometry(f"{int((Data.resoNum+1)*(textlen*7.8)+20)}x800")
         self.root.title("使用细节")
         self.Data = Data

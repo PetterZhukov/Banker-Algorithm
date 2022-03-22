@@ -8,7 +8,6 @@ from tkinter.ttk import Combobox
 from Calculation_module.calculateOrder import dfs_Search
 from Calculation_module.initModel import initData
 from Constant.constant import transNumlistToAlplist
-from UI.view_AnsDetail import AnsDetail
 
 textlen = 7
 
@@ -23,39 +22,39 @@ def setTableText(master, toText, i, j, _textlen=textlen):
 
 class ShowAnslist():
     def __init__(self, ansClass: dfs_Search):
-        self.root = Tk()
-        self.root.geometry(f"800x800")
-        self.root.title("安全序列")
+        self.root = Toplevel()
         self.ansClass = ansClass
+        self.root.geometry(f"{max(650,8*self.ansClass.clientNum+120)}x800")
+        self.root.title("安全序列")
         # set the size
 
         self.creatScroAndTable()
 
     class ansTableFrame(Frame):
-        def __init__(self, master, anslist):
+        def __init__(self, master, anslist,clientNum):
             Frame.__init__(self, master)
+            self.clientNum=clientNum
             self.root = master
             self.anslist = anslist
             self.__creatTable()
 
         def __creatTable(self):
-            titleList = [' 序号', '   释放序列', ' 用时', '查看详情']
-            textLenList = [6, 30, 8, 8]
+            titleList = [' 序号', '   释放序列', ' 用时']
+            textLenList = [6,max(30,6*self.clientNum+8), 8]
             # 标题
-            for j in range(4):
+            for j in range(3):
                 setTableText(
                     self, f'{titleList[j]}',0, j, textLenList[j])
-
+            changeSizeFun=lambda x:f"{x:>4}"
             # 内容
             for i in range(len(self.anslist)):
                 setTableText(
                     self, f'{i+1:>{textLenList[0]-1}}', i+1, 0, textLenList[0])
                 setTableText(
-                    self, f'   {" ,".join(map(lambda x:str(x),transNumlistToAlplist(self.anslist[i].retFinalRecord().retClientList())))}', i+1, 1, textLenList[1])
+                    self, f'{"Name:":<6}{",".join(map(changeSizeFun,transNumlistToAlplist(self.anslist[i].retFinalRecord().retClientList())))}\n{"Begin:":>6}{",".join(map(changeSizeFun,self.anslist[i].retFinalRecord().retBeginTimeList()))}', i+1, 1, textLenList[1])
                 setTableText(
                     self, f'{self.anslist[i].retEndTime():>{textLenList[2]-1}}', i+1, 2, textLenList[2])
-                Button(self, text="展示详情", command=lambda: (AnsDetail(self.anslist[i]).showPage())).grid(
-                    row=i+1, column=3, padx=10, sticky=EW)
+
 
     def showPage(self):
         self.root.mainloop()
@@ -102,10 +101,9 @@ class ShowAnslist():
             row=row, sticky=E, padx=35)
 
         ansNum = StringVar()
-        ansNum.set(self.ansClass.retAnsNum())
-        ansNumEntry = Entry(contentFrame, textvariable=ansNum, state='disable')
-        ansNumEntry.grid(row=row, column=1, sticky=W)
-
+        ansNum.set(str(self.ansClass.retAnsNum()))
+        ansNumEntry = Entry(contentFrame, textvariable=ansNum,state='disable').grid(row=row, column=1, sticky=W)
+        
         row += 1
         # 最少时间
         Label(contentFrame, text="最短用时:", font=('宋体', 13, 'bold')).grid(
@@ -113,8 +111,8 @@ class ShowAnslist():
 
         leastTime = StringVar()
         leastTime.set(self.ansClass.retMinTimeAns().retEndTime())
-        leastTimeEntry = Entry(contentFrame, textvariable=leastTime, state='disable')
-        leastTimeEntry.grid(row=row, column=1, sticky=W)
+        leastTimeEntry = Entry(contentFrame, textvariable=leastTime,state='disable').grid(row=row, column=1, sticky=W)
+        
 
         # --------------------------------------------------
         row += 1
@@ -125,7 +123,7 @@ class ShowAnslist():
         Label(contentFrame, text="安全序列显示", font=('宋体', 13, 'bold')).grid(
             row=row, sticky=E, padx=35)
 
-        self.ansTableFrame(contentFrame, self.ansClass.retAnsList()).grid(row=row,
+        self.ansTableFrame(contentFrame, self.ansClass.retAnsList(),self.ansClass.clientNum).grid(row=row,
                                                                   stick=E,
                                                                   column=0,
                                                                   columnspan=10,
