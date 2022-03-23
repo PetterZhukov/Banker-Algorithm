@@ -69,7 +69,11 @@ class OriginFrame(Frame):
         row += 1
         ttk.Separator(self, orient='horizontal').grid(
             row=row, column=0, rowspan=1, columnspan=4, sticky='EW', pady=5, padx=5)
-
+        
+        row += 1
+        Label(self, text="保存当前信息", font=('宋体', 13, 'bold')).grid(
+            row=row,column=1)
+        
         row += 1
         Label(self, text="保存名", font=('宋体', 13, 'bold')).grid(
             row=row, sticky=E, padx=35)

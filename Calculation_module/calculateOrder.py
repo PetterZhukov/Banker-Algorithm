@@ -6,7 +6,7 @@ from Calculation_module.baseCalculate import *
 from Constant.constant import *
 
 sec_Max = 1e6
-
+ansList_maxLen=1500
 
 class record:
     '记录 当前那些客户开始释放以及释放的时间'
@@ -35,15 +35,6 @@ class record:
         '客户是否已经被释放 True:已被释放且被记录'
         return clientName in self.clientList
 
-    def transClassToTuple(self):
-        return tuple(zip(self.clientList, self.beginTimeList))
-        # 假如超过26  -------------------------------------------
-        # return zip(self.clientList, self.beginTimeList)
-
-    def transClassToString(self):
-        return tuple(zip(map(lambda x: numToAlp_dict[x], self.clientList), map(lambda x: f"{x:>2}", self.beginTimeList)))
-
-
 class ansRecord:
     '记录最终结果'
 
@@ -60,16 +51,8 @@ class ansRecord:
     def retEndTime(self):
         return self.endTime
 
-    def transClassToTuple(self):
-        return (self.finalRecord.transClassToTuple(), self.endTime)
-
-    def transClassToString(self):
-        return(
-            f'{self.finalRecord.transClassToString()}   end={self.endTime}')
-
-
 class base_AnsClass:
-    def __init__(self, orignData: initData, anslist) -> None:
+    def __init__(self, orignData: baseData, anslist) -> None:
         self.ClassName = 'AnsClass'
         # 初始Data
         self.orignData = orignData
@@ -89,10 +72,6 @@ class base_AnsClass:
     def retMinTimeAns(self) -> ansRecord:
         return self.anslist[0]
 
-    def PrintDfsResult(self):
-        for i, x in enumerate(self.anslist):
-            print(f'{i+1:>3}  {x.transClassToString()}')
-
 
 class dfs_Search(base_AnsClass):
     def __init__(self, Data: initData) -> None:
@@ -102,8 +81,8 @@ class dfs_Search(base_AnsClass):
 
         # anslist
         self.anslist = []
+
         self.clientNum, self.resoNum = Data.clientNum, Data.resoNum
-        # clientPartSum
         self.clientPartSum = listGetSum(
             Data.boolNeed, self.clientNum, self.resoNum)
         timeTableList = [
@@ -134,6 +113,10 @@ class dfs_Search(base_AnsClass):
         '''
         clientNum = Data.clientNum
         resoNum = Data.resoNum
+
+        #超过设定最大条数，结束dfs
+        if len(self.anslist)>=ansList_maxLen:
+            return
 
         if sec >= sec_Max:
             return
